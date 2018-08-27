@@ -5,7 +5,7 @@
                 :pressed="glyphs[character].selected"
                 variant="outline-primary"
                 v-for="(character,index) in Object.keys(glyphs)"
-                @click="$emit('toggle-char', character)"
+                @click="$emit('toggle-char', glyphs[character])"
         >
             {{character}}
         </b-button>

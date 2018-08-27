@@ -10,11 +10,9 @@
                     </b-card>
                 </b-col>
                 <b-card no-body>
-                    <b-card-header>
-                        <b-nav pills>
-                            <b-nav-item active>Paint</b-nav-item>
-                        </b-nav>
-                    </b-card-header>
+                    <b-tabs card>
+                        <b-tab :title="char" v-for="(char, index) in Object.keys(openCharacters)" dismissible></b-tab>
+                    </b-tabs>
                     <pixel-grid class="card-img-bottom"></pixel-grid>
                 </b-card>
 
@@ -24,22 +22,22 @@
                             <b-tab title="Caps" active>
                                 <character-picker
                                         :glyphs="characters.caps"
-                                        v-on:toggle-char="characters.caps[$event].selected = true"></character-picker>
+                                        v-on:toggle-char="$event.open()"></character-picker>
                             </b-tab>
                             <b-tab title="Small">
                                 <character-picker
                                         :glyphs="characters.small"
-                                        v-on:toggle-char="characters.small[$event].selected = true"></character-picker>
+                                        v-on:toggle-char="$event.open()">"></character-picker>
                             </b-tab>
                             <b-tab title="Numbers">
                                 <character-picker
                                         :glyphs="characters.numbers"
-                                        v-on:toggle-char="characters.numbers[$event].selected = true"></character-picker>
+                                        v-on:toggle-char="$event.open()"></character-picker>
                             </b-tab>
                             <b-tab title="Special">
                                 <character-picker
                                         :glyphs="characters.special"
-                                        v-on:toggle-char="characters.special[$event].selected = true"></character-picker>
+                                        v-on:toggle-char="$event.open()">"></character-picker>
                             </b-tab>
                         </b-tabs>
                     </b-card>
@@ -68,7 +66,6 @@
         },
         props: {
             primaryColor: {default: 'white'},
-            openCharacters: {type: Set, default: () => new Set()}
 
         },
         data() {
@@ -81,10 +78,18 @@
                 }
             }
         },
+        computed: {
+            allCharacters() {
+                return Object.assign({}, this.characters.caps, this.characters.small, this.characters.numbers, this.characters.special)
+            },
+            openCharacters() {
+                return this.$_.pickBy(this.allCharacters, (item) => item.selected )
+            }
+        },
         methods: {
             makeCharacterList(chars) {
                 return chars.split('').reduce((result, item) => {
-                    result[item] = {selected: false, close() { this.selected = false }, open() { this.selected = true } };
+                    result[item] = {selected: false, close() { this.selected = false }, open() { this.selected = true }, toggle() { this.selected = !this.selected} };
                     return result
                 }, {})
             }
