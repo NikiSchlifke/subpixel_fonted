@@ -9,33 +9,37 @@
                         </b-card-header>
                     </b-card>
                 </b-col>
-                    <b-card no-body>
-                        <b-card-header>
-                            <b-nav pills>
-                                <b-nav-item active>Paint</b-nav-item>
-                            </b-nav>
-                        </b-card-header>
-                        <pixel-grid class="card-img-bottom"></pixel-grid>
-                    </b-card>
+                <b-card no-body>
+                    <b-card-header>
+                        <b-nav pills>
+                            <b-nav-item active>Paint</b-nav-item>
+                        </b-nav>
+                    </b-card-header>
+                    <pixel-grid class="card-img-bottom"></pixel-grid>
+                </b-card>
 
                 <b-col col auto>
                     <b-card no-body>
                         <b-tabs card>
                             <b-tab title="Caps" active>
                                 <character-picker
-                                characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ" :activeCharacters="openCharacters" v-on:toogleChar="openCharacters.add($event)"></character-picker>
+                                        :glyphs="characters.caps"
+                                        v-on:toggle-char="characters.caps[$event].selected = true"></character-picker>
                             </b-tab>
                             <b-tab title="Small">
                                 <character-picker
-                                characters="abcdefghijklmnopqrstuvwxyz" :activeCharacters="openCharacters" v-on:toogleChar="openCharacters.add($event)"></character-picker>
+                                        :glyphs="characters.small"
+                                        v-on:toggle-char="characters.small[$event].selected = true"></character-picker>
                             </b-tab>
                             <b-tab title="Numbers">
                                 <character-picker
-                                        characters="0123456789" :activeCharacters="openCharacters" v-on:toogleChar="openCharacters.add($event)"></character-picker>
+                                        :glyphs="characters.numbers"
+                                        v-on:toggle-char="characters.numbers[$event].selected = true"></character-picker>
                             </b-tab>
                             <b-tab title="Special">
                                 <character-picker
-                                        characters="@ !&quot;#$%&'()*+,-./" :activeCharacters="openCharacters" v-on:toogleChar="openCharacters.add($event)"></character-picker>
+                                        :glyphs="characters.special"
+                                        v-on:toggle-char="characters.special[$event].selected = true"></character-picker>
                             </b-tab>
                         </b-tabs>
                     </b-card>
@@ -43,7 +47,7 @@
             </b-row>
             <b-row>
             </b-row>
-            <b-navbar fixed="top" >
+            <b-navbar fixed="top">
             </b-navbar>
         </b-container>
 
@@ -54,6 +58,7 @@
     import Swatches from 'vue-swatches'
     import CharacterPicker from './components/CharacterPicker'
     import PixelGrid from './components/PixelGrid'
+
     export default {
         name: 'app',
         components: {
@@ -63,10 +68,25 @@
         },
         props: {
             primaryColor: {default: 'white'},
+            openCharacters: {type: Set, default: () => new Set()}
+
         },
         data() {
             return {
-                openCharacters: new Set()
+                characters: {
+                    caps: this.makeCharacterList("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+                    small: this.makeCharacterList("abcdefghijklmnopqrstuvwxyz"),
+                    numbers: this.makeCharacterList("0123456789"),
+                    special: this.makeCharacterList("@ !&quot;#$%&'()*+,-./"),
+                }
+            }
+        },
+        methods: {
+            makeCharacterList(chars) {
+                return chars.split('').reduce((result, item) => {
+                    result[item] = {selected: false, close() { this.selected = false }, open() { this.selected = true } };
+                    return result
+                }, {})
             }
         }
     }
@@ -81,6 +101,7 @@
         color: #2c3e50;
         margin-top: 60px;
     }
+
     .bg-black {
         background-color: black;
     }

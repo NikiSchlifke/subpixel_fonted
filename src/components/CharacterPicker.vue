@@ -1,9 +1,10 @@
 <template>
     <b-form>
         <b-button
-                class="btn-lg m-2 square"
+                class="btn-lg m-1 square"
+                :pressed="glyphs[character].selected"
                 variant="outline-primary"
-                v-for="(character,index) in characterList"
+                v-for="(character,index) in Object.keys(glyphs)"
                 @click="$emit('toggle-char', character)"
         >
             {{character}}
@@ -16,15 +17,9 @@
     export default {
         name: "CharacterPicker",
 
-        props: {
-            'characters': {default: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"},
-            'activeCharacters': {}
-        },
-        computed: {
-            characterList() {
-                return this.characters.split('')
-            }
-        }
+        props: [
+            'glyphs'
+        ]
     }
 </script>
 
